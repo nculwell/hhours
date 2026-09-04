@@ -39,7 +39,15 @@ function sum(numbers) {
 }
 
 function parse(v) {
-  return parseFloat(v);
+  const vv = v.trim();
+  if (vv.match(/^\d{1,2}:\d\d$/)) {
+    const [h,m] = v.split(':');
+    return (parseInt(h) * 60 + parseInt(m)) / 60;
+  } else if (vv.match(/^\d+(.\d*)?$/)) {
+    return parseFloat(v);
+  } else {
+    return NaN
+  }
 }
 
 function calculate() {
@@ -62,7 +70,7 @@ function calculate() {
   const total = sum(daysWithHours.map(d => d.diff - lunchHours));
   console.log(`Total hours: ${total}`);
   document.getElementById('total-hours').textContent = total.toString();
-  let sched = days.map(d => `${d.day}: ${d.st} - ${d.et} (${d.diff})`).join("<BR>");
+  let sched = daysWithHours.map(d => `${d.day}: ${d.st} - ${d.et} (${d.diff - lunchHours})`).join("<BR>");
   document.getElementById('schedule').setHTML(sched);
 }
 
