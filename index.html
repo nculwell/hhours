@@ -2,6 +2,11 @@
 <html>
     <head>
         <title='Weekly schedule hours calculator' />
+<style>
+.row-title {
+    font-weight: bold;
+}
+</style>
     </head>
     <body>
         <div>
@@ -9,6 +14,7 @@
         </div>
         <table>
             <thead>
+                <th></th>
                 <th>Sun</th>
                 <th>Mon</th>
                 <th>Tue</th>
@@ -17,7 +23,18 @@
                 <th>Fri</th>
                 <th>Sat</th>
             </thead>
-            <tr id='hours-row'>
+            <tr id='start-times'>
+                <td class='row-title'>START</td>
+                <td><input type='text' /></td>
+                <td><input type='text' /></td>
+                <td><input type='text' /></td>
+                <td><input type='text' /></td>
+                <td><input type='text' /></td>
+                <td><input type='text' /></td>
+                <td><input type='text' /></td>
+            </tr>
+            <tr id='end-times'>
+                <td class='row-title'>END</td>
                 <td><input type='text' /></td>
                 <td><input type='text' /></td>
                 <td><input type='text' /></td>
