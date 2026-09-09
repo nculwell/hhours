@@ -21,8 +21,10 @@ function getIncrementCells() {
 function addIncrementButtons() {
   const cells = getIncrementCells();
   for (c of cells) {
+    c.appendChild(incBtn(-15));
     c.appendChild(incBtn(-5));
     c.appendChild(incBtn(+5));
+    c.appendChild(incBtn(+15));
   }
 }
 
@@ -69,6 +71,7 @@ function incrementClicked(dayIndex, incAmt) {
   console.log(st, et);
   sti[dayIndex].value = st + incHrs;
   eti[dayIndex].value = et + incHrs;
+  changeListener();
 }
 
 function addListeners() {
@@ -101,9 +104,9 @@ function getTimeInputs() {
 }
 
 function changeListener(event) {
-  console.log("CHANGED", event);
-  const v = event.target.value;
-  console.log(`Field changed to value: ${v}`);
+  //console.log("CHANGED", event);
+  //const v = event.target.value;
+  //console.log(`Field changed to value: ${v}`);
   const times = readInputs();
   updateDisplay(times);
   save(times);
