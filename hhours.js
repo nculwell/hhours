@@ -64,7 +64,6 @@ function load() {
 function incrementClicked(dayIndex, incAmt) {
   const incHrs = incAmt / 60;
   console.log(`Change ${dayIndex} ${dayAbbrs[dayIndex]} by ${fmtInc(incAmt)}`);
-  //const [sti, eti, lunch] = getTimeInputs();
   const [sti, eti, _] = getTimeInputs();
   const st = parseTimeInput(sti[dayIndex].value);
   const et = parseTimeInput(eti[dayIndex].value);
@@ -129,9 +128,14 @@ function parseTimeInput(v) {
 }
 
 function fmtTime(t) {
-  const hours = Math.floor(t);
+  let hours = Math.floor(t);
   const mins = Math.floor((t - hours) * 60);
-  return `${hours}:${mins.toString().padStart(2, '0')}`;
+  let ampm = 'AM';
+  if (hours >= 12) {
+    ampm = 'PM';
+    hours -= 12;
+  }
+  return `${hours}:${mins.toString().padStart(2, '0')} ${ampm}`;
 }
 
 function readInputs() {
@@ -160,6 +164,7 @@ function updateDisplay(times) {
   document.getElementById('total-hours').textContent = total.toString();
   let sched = daysWithHours.map(d =>
     `${d.day}: ${fmtTime(d.st)} - ${fmtTime(d.et)} (${d.diff - times.lunchHours} hours)`).join("<BR>");
+  sched = [ sched, `Lunch break: ${times.lunchHours} hours` ].join("<BR>");
   document.getElementById('schedule').setHTML(sched);
 }
 
