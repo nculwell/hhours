@@ -8,7 +8,34 @@ const LOCAL_STORAGE_KEY = 'HHOURS_SCHEDULE';
 // The starting point for execution.
 function hoursInit() {
   load();
+  addIncrementButtons();
   addListeners();
+}
+
+function getIncrementCells() {
+  const incRow = document.getElementById('increments');
+  const cells = Array.from(incRow.children).slice(1);
+  return cells;
+}
+
+function addIncrementButtons() {
+  const cells = getIncrementCells();
+  for (c of cells) {
+    c.appendChild(incBtn(-5));
+    c.appendChild(incBtn(+5));
+  }
+}
+
+function incBtn(incAmt) {
+  const btn = document.createElement('input');
+  btn.type = 'button';
+  btn.value = fmtInc(incAmt);
+  btn.dataset.inc = incAmt;
+  return btn;
+}
+
+function fmtInc(incAmt) {
+  return (incAmt >= 0 ? '+' : '-') + Math.abs(incAmt).toString();
 }
 
 function save(times) {
@@ -32,12 +59,35 @@ function load() {
   }
 }
 
+function incrementClicked(dayIndex, incAmt) {
+  const incHrs = incAmt / 60;
+  console.log(`Change ${dayIndex} ${dayAbbrs[dayIndex]} by ${fmtInc(incAmt)}`);
+  //const [sti, eti, lunch] = getTimeInputs();
+  const [sti, eti, _] = getTimeInputs();
+  const st = parseTimeInput(sti[dayIndex].value);
+  const et = parseTimeInput(eti[dayIndex].value);
+  console.log(st, et);
+  sti[dayIndex].value = st + incHrs;
+  eti[dayIndex].value = et + incHrs;
+}
+
 function addListeners() {
-  const inputs = document.getElementsByTagName('input');
+  const inputs = document.querySelectorAll("input[type='text']");
   console.log(inputs);
   for (input of inputs) {
-    //input.value = '';
     input.addEventListener('input', changeListener);
+  }
+  let dayIndex = 0;
+  for (cell of getIncrementCells()) {
+    const buttons = cell.getElementsByTagName('input');
+    for (button of buttons) {
+      ((b, di) => {
+        b.addEventListener('click', () => {
+          incrementClicked(di, parseInt(b.dataset.inc));
+        });
+      })(button, dayIndex);
+    }
+    dayIndex++;
   }
 }
 
@@ -63,7 +113,7 @@ function sum(numbers) {
   return numbers.reduce((accum, current) => (accum + current), 0);
 }
 
-function parse(v) {
+function parseTimeInput(v) {
   const vv = v.trim();
   if (vv.match(/^\d{1,2}:\d\d$/)) {
     const [h,m] = v.split(':');
@@ -86,12 +136,12 @@ function readInputs() {
   console.log(sti);
   const [startTimes, endTimes] = (
     [sti, eti].map(timeInputs =>
-      Array.from(timeInputs).map(input => parse(input.value)))
+      Array.from(timeInputs).map(input => parseTimeInput(input.value)))
   );
   let days = Iterator.zip([ dayAbbrs, startTimes, endTimes ]);
   days = Array.from(days.map(([d,s,e]) => ({ day: d, st: s, et: e, diff: e-s })));
   console.log('days:', days);
-  let lunchHours = parse(lunch.value);
+  let lunchHours = parseTimeInput(lunch.value);
   if (Number.isNaN(lunchHours) || lunchHours <= 0) {
     lunchHours = 0;
   }
