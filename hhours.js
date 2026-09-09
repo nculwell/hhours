@@ -68,8 +68,8 @@ function incrementClicked(dayIndex, incAmt) {
   const st = parseTimeInput(sti[dayIndex].value);
   const et = parseTimeInput(eti[dayIndex].value);
   console.log(st, et);
-  sti[dayIndex].value = st + incHrs;
-  eti[dayIndex].value = et + incHrs;
+  sti[dayIndex].value = addTimes(st, incHrs);
+  eti[dayIndex].value = addTimes(et, incHrs);
   changeListener();
 }
 
@@ -128,8 +128,9 @@ function parseTimeInput(v) {
 }
 
 function fmtTime(t) {
+  t = roundTime(t);
   let hours = Math.floor(t);
-  const mins = Math.floor((t - hours) * 60);
+  const mins = Math.round((t - hours) * 60);
   let ampm = 'AM';
   if (hours >= 12) {
     ampm = 'PM';
@@ -159,12 +160,20 @@ function updateDisplay(times) {
   const daysWithHours = times.days.filter(d => !Number.isNaN(d.diff) && d.diff > 0);
   console.log('daysWithHours:', daysWithHours);
   console.log("Lunch duration:", times.lunchHours);
-  const total = sum(daysWithHours.map(d => d.diff - times.lunchHours));
+  const total = roundTime(sum(daysWithHours.map(d => d.diff - times.lunchHours)));
   console.log(`Total hours: ${total}`);
   document.getElementById('total-hours').textContent = total.toString();
   let sched = daysWithHours.map(d =>
-    `${d.day}: ${fmtTime(d.st)} - ${fmtTime(d.et)} (${d.diff - times.lunchHours} hours)`).join("<BR>");
+    `${d.day}: ${fmtTime(d.st)} - ${fmtTime(d.et)} (${roundTime(d.diff - times.lunchHours)} hours)`).join("<BR>");
   sched = [ sched, `Lunch break: ${times.lunchHours} hours` ].join("<BR>");
   document.getElementById('schedule').setHTML(sched);
+}
+
+function roundTime(hours) {
+  return roundedMins = Math.round(hours * 60) / 60;
+}
+
+function addTimes(hoursA, hoursB) {
+  return ((Math.round(hoursA * 60) + Math.round(hoursB * 60)) / 60);
 }
 
